@@ -1,11 +1,11 @@
 <!--
-* Copyright (c) 1986-2023 Ric Wright
+* Copyright (c) 1986-2023 Richard K. Wright. All rights reserved.
 *
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the some license or other...
+* This work is licensed under the terms of the MIT license.
+* For a copy, see <https://opensource.org/licenses/MIT>.
 *
-* Contributors:
-*     Ric Wright - initial implementation
+* TestCont.html
+*
 -->
 
 <!DOCTYPE html>
@@ -15,6 +15,13 @@
     <title>Contour Test</title>
     <script src="gfx_math/matrix.js" ></script>
     <script src="gfx_contour/Contour.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            background-color: linen;
+        }
+    </style>
 </head>
 <body>
 
@@ -23,7 +30,7 @@
 
 <script>
 
-    var canvas;
+    let canvas;
     let contLevel = 2;
     let array = [
         [1, 3, 1],
@@ -37,15 +44,26 @@
     drawContours( array, contLevel );
 
     //========= Local Functions ==========================
+    /**
+     * Literally creates the canvas and sets the basic parms
+     * for the window
+     */
     function initCanvas() {
         canvas = document.createElement('canvas');
         canvas.id = "myCanvas";
-        canvas.width = window.innerWidth;
+        canvas.width = document.body.clientWidth;   // innerWidth;
         canvas.height = window.innerHeight;
         document.body.appendChild(canvas);
     }
 
+    /**
+     * Draws a simple grid on the screen using the dimensions of the
+     * array as the the dimensions of the grid.
+     *
+     * @param array
+     */
     function drawGrid ( array ) {
+        let gridHeight,gridWidth,margHeight,margWidth;
         if (canvas.width >= canvas.height) {
             gridHeight = 0.8 * canvas.height;
             margHeight = 0.1 * canvas.height;
@@ -60,12 +78,7 @@
             margHeight = (canvas.height - gridHeight) / 2.0;
         }
 
-        ///var contour0 = new Contour();
-
-        //var	mat = new Matrix();
-        //var result = mat.transform(2,3);
-
-        var ctx = canvas.getContext("2d");
+        let ctx = canvas.getContext("2d");
         ctx.lineWidth = "4";
         ctx.strokeStyle = "green";
 
@@ -79,16 +92,22 @@
         ctx.stroke();
     }
 
+    /**
+     * Creates the contour object, initializes it, then calls it with one level
+     *
+     * @param array
+     * @param contLevel
+     */
     function drawContours (array, contLevel ) {
-        var startTime = performance.now();
+        let startTime = performance.now();
 
-        var contour = new Contour();
+        let contour = new Contour();
 
         contour.SetUp( array );
 
         contour.ThreadContours( array, contLevel );
 
-        var elapsed = (performance.now() - startTime)/1000.0;
+        let elapsed = (performance.now() - startTime)/1000.0;
         console.log("Contour complete! elapsed: " +  elapsed.toFixed(3)  );
     }
 </script>
