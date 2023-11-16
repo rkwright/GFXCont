@@ -30,6 +30,7 @@
 
 <script>
 
+    let gridMat;
     let canvas;
     let contLevel = 2;
     let array = [
@@ -77,6 +78,13 @@
             gridHeight = gridWidth * array.length / array[0].length;
             margHeight = (canvas.height - gridHeight) / 2.0;
         }
+
+        gridMat = new Matrix();
+        gridMat.scale( array.length/gridWidth, array[0].length/gridHeight );
+        gridMat.translate( margWidth, margHeight );
+
+        var pos = gridMat.transform( 0, 0 );
+        pos = gridMat.transform( 3, 3 );
 
         let ctx = canvas.getContext("2d");
         ctx.lineWidth = "4";

@@ -12,9 +12,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Contour Test</title>
+    <title>Matrix Test</title>
     <script src="gfx_math/matrix.js" ></script>
-    <script src="gfx_contour/Contour.js"></script>
 
     <style>
         body {
@@ -42,7 +41,6 @@
 
     initCanvas();
     drawGrid( array );
-    drawContours( array, contLevel );
 
     //========= Local Functions ==========================
     /**
@@ -64,7 +62,7 @@
      * @param array
      */
     function drawGrid ( array ) {
-        let gridHeight,gridWidth,margHeight,margWidth;
+        let gridHeight, gridWidth, margHeight, margWidth;
         if (canvas.width >= canvas.height) {
             gridHeight = 0.8 * canvas.height;
             margHeight = 0.1 * canvas.height;
@@ -80,42 +78,48 @@
         }
 
         gridMat = new Matrix();
-        gridMat.scale( array.length/gridWidth, array[0].length/gridHeight );
-        gridMat.translate( margWidth, margHeight );
+        gridMat.translate(margWidth, margHeight);
+        gridMat.scale(gridWidth / array.length, gridHeight / array[0].length);
 
-        var pos = gridMat.transform( 0, 0 );
-        pos = gridMat.transform( 3, 3 );
+        var pos = gridMat.transform(0, 0);
+        pos = gridMat.transform(3, 3);
 
         let ctx = canvas.getContext("2d");
         ctx.lineWidth = "4";
         ctx.strokeStyle = "green";
 
         ctx.beginPath();
-        ctx.rect( 0, 0, canvas.width, canvas.height );
+        ctx.rect(0, 0, canvas.width, canvas.height);
         ctx.stroke();
 
         ctx.strokeStyle = "red";
         ctx.beginPath();
-        ctx.rect( margWidth, margHeight, gridWidth, gridHeight );
+        ctx.rect(margWidth, margHeight, gridWidth, gridHeight);
         ctx.stroke();
+
+        ctx.strokeStyle = "pink";
+
+        for (i = 0; i < array.length; i++) {
+
+            start = gridMat.transform(i, 0);
+            end = gridMat.transform(i, array[0].length)
+
+            ctx.beginPath();
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(end.x, end.y);
+            ctx.stroke();
+        }
+
+        for (j = 0; j < array[0].length; j++) {
+
+            start = gridMat.transform(0, j);
+            end = gridMat.transform(array.length, j);
+
+            ctx.beginPath();
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(end.x, end.y);
+            ctx.stroke();
+        }
     }
 
-    /**
-     * Creates the contour object, initializes it, then calls it with one level
-     *
-     * @param array
-     * @param contLevel
-     */
-    function drawContours (array, contLevel ) {
-        let startTime = performance.now();
-
-        let contour = new Contour();
-
-        contour.SetUp( array );
-
-        contour.ThreadContours( array, contLevel );
-
-        let elapsed = (performance.now() - startTime)/1000.0;
-        console.log("Contour complete! elapsed: " +  elapsed.toFixed(3)  );
-    }
 </script>
