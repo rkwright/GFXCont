@@ -6,6 +6,12 @@
 *
 * TestCont.html
 *
+* This is a short script to exercise (test) the basic functionality
+* of the contouring library and, by implication. all the underlying
+* libs (math_ext etc.)  as well.  It is not intended as a thorough
+* test of the contour-threading routine. Note also that this initial
+* version supports only the grid-based contouring routines.
+*
 -->
 
 <!DOCTYPE html>
@@ -29,6 +35,8 @@
 </html>
 
 <script>
+    "use strict";
+    const REVISION = '0.2.0';
 
     const WIN_MARGIN =  0.1;
     let gridHeight, gridWidth, margHeight, margWidth;
@@ -50,20 +58,26 @@
 
     //========= Local Functions ==========================
     /**
-     * Literally creates the canvas and sets the basic parms
+     * Literally creates the canvas and sets the basic params
      * for the window
      */
     function initCanvas() {
         canvas = document.createElement('canvas');
         canvas.id = "gfxCanvas";
-        canvas.width = document.body.clientWidth;   // innerWidth;
+
+        // we use the clientWidth property (instead of innerWidth) here
+        // because it gives us the width of the whole window, less the
+        // width of the scrollbar, if any.
+        // But we can't use the clientHeight property because normally
+        // its value will be 0 at the time this method is called
+        canvas.width = document.body.clientWidth;
         canvas.height = window.innerHeight;
         document.body.appendChild(canvas);
     }
 
     /**
      * Draws a simple grid on the screen using the dimensions of the
-     * array as the the dimensions of the grid.
+     * array as the dimensions of the grid.
      *
      * @param array
      */
@@ -91,6 +105,10 @@
         return mat;
     }
 
+    /**
+     *
+     * @param array
+     */
     function drawGrid ( array ) {
 
         let ctx = canvas.getContext("2d");
@@ -109,7 +127,8 @@
         ctx.strokeStyle = "pink";
         ctx.lineWidth = "2";
 
-        for (i = 0; i < array.length; i++) {
+        let start,end;
+        for ( let i = 0; i < array.length; i++) {
 
             start = gridMat.transform(i, 0);
             end = gridMat.transform(i, array[0].length)
@@ -120,7 +139,7 @@
             ctx.stroke();
         }
 
-        for (j = 0; j < array[0].length; j++) {
+        for ( let j = 0; j < array[0].length; j++) {
 
             start = gridMat.transform(0, j);
             end = gridMat.transform(array.length, j);
@@ -155,15 +174,7 @@
      *
      */
     window.addEventListener('resize', function () {
-        "use strict";
         window.location.reload();
     });
 
-    /**
-     *
-     */
-    function refreshGrid () {
-        initCanvas();
-        drawGrid( array );
-    }
 </script>
