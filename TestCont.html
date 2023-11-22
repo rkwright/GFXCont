@@ -30,6 +30,9 @@
 
 <script>
 
+    const WIN_MARGIN =  0.1;
+    let gridHeight, gridWidth, margHeight, margWidth;
+
     let gridMat;
     let canvas;
     let contLevel = 2;
@@ -41,6 +44,7 @@
     ];
 
     initCanvas();
+    gridMat = createGrid( array );
     drawGrid( array );
     drawContours( array, contLevel );
 
@@ -51,7 +55,7 @@
      */
     function initCanvas() {
         canvas = document.createElement('canvas');
-        canvas.id = "myCanvas";
+        canvas.id = "gfxCanvas";
         canvas.width = document.body.clientWidth;   // innerWidth;
         canvas.height = window.innerHeight;
         document.body.appendChild(canvas);
@@ -63,31 +67,34 @@
      *
      * @param array
      */
-    function drawGrid ( array ) {
-        let gridHeight,gridWidth,margHeight,margWidth;
+    function createGrid ( array ) {
+
         if (canvas.width >= canvas.height) {
-            gridHeight = 0.8 * canvas.height;
-            margHeight = 0.1 * canvas.height;
+
+            margHeight = WIN_MARGIN * canvas.height;
+            gridHeight = canvas.height - margHeight * 2.0;
             gridWidth = gridHeight * array.length / array[0].length;
             margWidth = (canvas.width - gridWidth) / 2.0;
 
         } else {
 
-            gridWidth = 0.8 * canvas.width;
-            margWidth = 0.1 * canvas.width;
-            gridHeight = gridWidth * array.length / array[0].length;
+            margWidth = WIN_MARGIN * canvas.width;
+            gridWidth = canvas.width - margWidth * 2.0;
+            gridHeight = gridWidth * array[0].length / array.length;
             margHeight = (canvas.height - gridHeight) / 2.0;
         }
 
-        gridMat = new Matrix();
-        gridMat.scale( array.length/gridWidth, array[0].length/gridHeight );
-        gridMat.translate( margWidth, margHeight );
+        let mat = new Matrix();
+        mat.translate(margWidth, margHeight);
+        mat.scale(gridWidth / array.length, gridHeight / array[0].length);
 
-        var pos = gridMat.transform( 0, 0 );
-        pos = gridMat.transform( 3, 3 );
+        return mat;
+    }
+
+    function drawGrid ( array ) {
 
         let ctx = canvas.getContext("2d");
-        ctx.lineWidth = "4";
+        ctx.lineWidth = "6";
         ctx.strokeStyle = "green";
 
         ctx.beginPath();
@@ -98,6 +105,31 @@
         ctx.beginPath();
         ctx.rect( margWidth, margHeight, gridWidth, gridHeight );
         ctx.stroke();
+
+        ctx.strokeStyle = "pink";
+        ctx.lineWidth = "2";
+
+        for (i = 0; i < array.length; i++) {
+
+            start = gridMat.transform(i, 0);
+            end = gridMat.transform(i, array[0].length)
+
+            ctx.beginPath();
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(end.x, end.y);
+            ctx.stroke();
+        }
+
+        for (j = 0; j < array[0].length; j++) {
+
+            start = gridMat.transform(0, j);
+            end = gridMat.transform(array.length, j);
+
+            ctx.beginPath();
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(end.x, end.y);
+            ctx.stroke();
+        }
     }
 
     /**
@@ -117,5 +149,21 @@
 
         let elapsed = (performance.now() - startTime)/1000.0;
         console.log("Contour complete! elapsed: " +  elapsed.toFixed(3)  );
+    }
+
+    /**
+     *
+     */
+    window.addEventListener('resize', function () {
+        "use strict";
+        window.location.reload();
+    });
+
+    /**
+     *
+     */
+    function refreshGrid () {
+        initCanvas();
+        drawGrid( array );
     }
 </script>
