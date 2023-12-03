@@ -162,9 +162,9 @@
 
         let contour = new Contour();
 
-        contour.SetUp( array );
+        contour.setupContours( array );
 
-        contour.ThreadContours( array, contLevel );
+        //contour.ThreadContours( array, contLevel );
 
         let elapsed = (performance.now() - startTime)/1000.0;
         console.log("Contour complete! elapsed: " +  elapsed.toFixed(3)  );
