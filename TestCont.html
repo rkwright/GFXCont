@@ -164,7 +164,7 @@
 
         contour.setupContours( array );
 
-        contour.singleContour( array, 0, contLevel );
+        contour.threadContour( array, 0, contLevel );
 
         let elapsed = (performance.now() - startTime)/1000.0;
         console.log("Contour complete! elapsed: " +  elapsed.toFixed(3)  );
