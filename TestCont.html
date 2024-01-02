@@ -44,17 +44,23 @@
     let gridMat;
     let canvas;
     let contLevel = 2;
-    let array = [
+    let array4x3 = [
         [1, 3, 1],
         [0, 5, 1],
         [1, 1, 3],
         [0, 0, 0]
     ];
 
+    let array3x3 = [
+        [1, 3, 1],
+        [0, 5, 1],
+        [1, 1, 3]
+    ];
+
     initCanvas();
-    gridMat = createGrid( array );
-    drawGrid( array );
-    drawContours( array, contLevel );
+    gridMat = createGrid( array3x3 );
+    drawGrid( array3x3 );
+    drawContours( array3x3, contLevel );
 
     //========= Local Functions ==========================
     /**
@@ -164,7 +170,7 @@
 
         contour.setupContours( array );
 
-        contour.threadContour( array, 0, contLevel );
+        contour.threadContour( array, 1, contLevel );
 
         let elapsed = (performance.now() - startTime)/1000.0;
         console.log("Contour complete! elapsed: " +  elapsed.toFixed(3)  );
