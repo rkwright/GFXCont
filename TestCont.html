@@ -106,7 +106,7 @@
 
         let mat = new Matrix();
         mat.translate(margWidth, margHeight);
-        mat.scale(gridWidth / array.length, gridHeight / array[0].length);
+        mat.scale(gridWidth / (array.length-1), gridHeight / (array[0].length-1));
 
         return mat;
     }
@@ -134,10 +134,10 @@
         ctx.lineWidth = "2";
 
         let start,end;
-        for ( let i = 0; i < array.length; i++) {
+        for ( let i = 0; i < (array.length-1); i++) {
 
             start = gridMat.transform(i, 0);
-            end = gridMat.transform(i, array[0].length)
+            end = gridMat.transform(i, (array[0].length-1))
 
             ctx.beginPath();
             ctx.moveTo(start.x, start.y);
@@ -145,10 +145,10 @@
             ctx.stroke();
         }
 
-        for ( let j = 0; j < array[0].length; j++) {
+        for ( let j = 0; j < (array[0].length-1); j++) {
 
             start = gridMat.transform(0, j);
-            end = gridMat.transform(array.length, j);
+            end = gridMat.transform((array.length-1), j);
 
             ctx.beginPath();
             ctx.moveTo(start.x, start.y);
@@ -163,6 +163,7 @@
      * @param array
      * @param contLevel
      */
+
     function drawContours (array, contLevel ) {
         let startTime = performance.now();
 
