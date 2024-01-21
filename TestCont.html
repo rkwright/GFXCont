@@ -37,7 +37,7 @@
 
 <script>
     "use strict";
-    //const REVISION = '0.2.0';
+    const REVISION = '0.2.0';
 
     const WIN_MARGIN =  0.1;
     let gridHeight, gridWidth, margHeight, margWidth;
@@ -135,6 +135,7 @@
         ctx.lineWidth = "2";
 
         let start,end;
+
         for ( let i = 0; i < (array.length-1); i++) {
 
             start = gridMat.transform(i, 0);
