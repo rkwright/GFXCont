@@ -17,15 +17,7 @@
 'use strict';
 // const REVISION = '0.2.0';
 
-const WIN_MARGIN =  0.1;        // space between canvas and border of display
-
-let     gridHeight, gridWidth;          // drawable portion of display
-let     margHeight, margWidth;          // "unprintable" portion of display
-
-let gridMat;        // main CTM
-let canvas;         // HTML canvas element
-
-let contLevel = 0;
+const  WIN_MARGIN =  0.1;  // space between canvas and border of display
 
 let array4x3 = [
     [1, 3, 1],
@@ -40,12 +32,19 @@ let array3x3 = [
     [1, 1, 3]
 ];
 
+let gridHeight, gridWidth;              // drawable portion of display
+let margHeight, margWidth;              // "unprintable" portion of display
+
+let gridMat;                            // main CTM
+let canvas;                             // HTML canvas element
+let contour = new Contour();   // Geo-F/X Contour object
+
 //---------------------- main  ------------------
 
 initCanvas();
 gridMat = createGrid( array3x3 );
 drawGrid( array3x3 );
-drawContours( array3x3, contLevel );
+drawContours( array3x3, 2.0 );
 
 //--------------------- local --------------------
 
@@ -57,10 +56,9 @@ function initCanvas() {
     canvas = document.createElement('canvas');
     canvas.id = "gfxCanvas";
 
-    // we use the clientWidth property (instead of innerWidth) here
-    // because it gives us the width of the whole window, less the
-    // width of the scrollbar, if any.
-    // But we can't use the clientHeight property because normally
+    // we use the clientWidth property (instead of innerWidth) here because it
+    // gives us the width of the whole window, less the width of the scrollbar, if any.
+    // *But* we can't use the clientHeight property because normally
     // its value will be 0 at the time this method is called
     canvas.width = document.body.clientWidth;
     canvas.height = window.innerHeight;
@@ -68,8 +66,8 @@ function initCanvas() {
 }
 
 /**
- * Draws a simple grid on the screen using the dimensions of the
- * array as the dimensions of the grid.
+ * Defines a simple grid as implied by using the dimensions of the
+ * array as the scale-factors of the grid.
  *
  * @param array
  */
@@ -148,23 +146,21 @@ function drawGrid ( array ) {
  *  In any case, it with the specified level
  *
  * @param array
- * @param contLevel
+ * @param contInterval
  */
-
-function drawContours (array, contLevel ) {
+function drawContours ( array, contInterval ) {
     let startTime = performance.now();
 
-    let contour = new Contour();
+    contour.setupContours( array, contInterval );
 
-    contour.setupContours( array );
-
-    contour.threadContour( array, 1, contLevel );
+    contour.threadContour( array, 1, contInterval );
 
     let elapsed = (performance.now() - startTime)/1000.0;
     console.log("Contour complete at " + performance +".  Elapsed: " +  elapsed.toFixed(3)  );
 }
 
 /**
+ * The user resized the window, so handle the event...
  *
  */
 window.addEventListener('resize', function () {
